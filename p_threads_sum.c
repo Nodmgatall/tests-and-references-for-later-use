@@ -14,13 +14,12 @@ typedef struct{
 
 }thread_data;
 
-
+//sums up all values exept its own for a certain range
 void *sum(void *data)
 {
     thread_data *t_data = (thread_data*)data;
     for(int start = t_data->start; start < t_data->end; start++)
     {
-
         unsigned long sum = 0;
         for(int i = 0; i < t_data->num_of_obj; i++)
         {
@@ -34,6 +33,7 @@ void *sum(void *data)
     return 0;
 }
 
+// returns array of chucksizes with max size diff = 1
 int *get_sizes_of_chunk(int number_of_threads, int number_of_objects)
 {
     int *chunk_sizes = (int *)malloc(number_of_threads * sizeof(int));
@@ -59,6 +59,8 @@ int main(int argc, char** argv)
         puts("ERROR: wrong number of argument. Should be three");
         exit(EXIT_FAILURE);
     }
+
+    // get command line arguments
     int number_of_objects = atoi(argv[1]);
     int number_of_iterations = atoi(argv[2]);
     int number_of_threads = atoi(argv[3]);
@@ -82,9 +84,10 @@ int main(int argc, char** argv)
     {
         int start = 0;
         int end  = 0;
+        
+        // calculate data for threads
         for(int i = 0; i < number_of_threads; i++)
         {
-
             start = end;
             end = start + chunk_sizes[i];
             thread_data_arr[i].end = end;
@@ -94,6 +97,8 @@ int main(int argc, char** argv)
             thread_data_arr[i].arr_of_num = array_of_numbers;
             thread_data_arr[i].thread_id = i;
         }
+
+        //create n threads 
         for(int i = 0; i < number_of_threads; i++)
         {
             pthread_create(&threads[i],NULL,sum, &thread_data_arr[i]);
@@ -105,6 +110,7 @@ int main(int argc, char** argv)
         memcpy(array_of_numbers, array_of_sum_of_numbers,number_of_objects * sizeof(unsigned long));
     }
 
+    // free all arrays
     free(array_of_numbers);
     free(array_of_sum_of_numbers);
     free(thread_data_arr);
