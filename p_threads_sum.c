@@ -109,6 +109,8 @@ int main(int argc, char** argv)
         }
         memcpy(array_of_numbers, array_of_sum_of_numbers,number_of_objects * sizeof(unsigned long));
     }
+    thread_data test;
+    
 
     // free all arrays
     free(array_of_numbers);
